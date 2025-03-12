@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration
+        PUBLIC "-//mybatis.org//DTD Config 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<!-- configuration 配置-->
+<configuration>
+
+    <!--设置打印日志-->
+    <settings>
+        <setting name="logImpl" value="STDOUT_LOGGING"/>
+        <!--关闭一级缓存 localCacheScope-->
+        <setting name="localCacheScope" value="STATEMENT"/>
+        <!--开启二级缓存-->
+        <setting name="cacheEnabled" value="true"/>
+    </settings>
+
+    <!--增加分页插件 pageHelper-->
+    <plugins>
+        <plugin interceptor="com.github.pagehelper.PageInterceptor"></plugin>
+    </plugins>
+
+</configuration>

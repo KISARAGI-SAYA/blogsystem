@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+       http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://www.springframework.org/schema/aop
+       http://www.springframework.org/schema/aop/spring-aop.xsd
+       http://www.springframework.org/schema/tx
+       http://www.springframework.org/schema/tx/spring-tx.xsd
+       http://www.springframework.org/schema/context
+       http://www.springframework.org/schema/context/spring-context.xsd">
+
+    <!--1.注解扫描-->
+    <context:component-scan base-package="com.xja.blogsystem.service.Impl"/>
+    <!--2.引入属性文件-->
+    <context:property-placeholder location="classpath:db.properties"/>
+    <!--3.数据源-->
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="${mysql.driverClassName}"></property>
+        <property name="url" value="${mysql.url}"></property>
+        <property name="username" value="${mysql.username}"></property>
+        <property name="password" value="${mysql.password}"></property>
+    </bean>
+    <!--4.SqlSessionFactoryBean -->
+    <bean id="factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+        <property name="dataSource" ref="dataSource"/>
+        <property name="typeAliasesPackage" value="com.xja.blogsystem.pojo"/>
+        <property name="mapperLocations" value="classpath:com/xja/blogsystem/mapper/*.xml"/>
+        <property name="configLocation" value="classpath:mybatis-config.xml"/>
+    </bean>
+    <!--5.配置mapper扫描bean-->
+    <bean id="mapper" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+        <property name="sqlSessionFactoryBeanName" value="factory"/>
+        <property name="basePackage" value="com.xja.blogsystem.mapper"/>
+    </bean>
+    <!--6.事务管理-->
+    <!--6.1配置事务Bean-->
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+        <property name="dataSource" ref="dataSource"/>
+    </bean>
+    <!--6.2配置事务方法  (业务层)-->
+    <tx:advice id="advice" transaction-manager="transactionManager">
+        <tx:attributes>
+            <tx:method name="query*" propagation="REQUIRED" isolation="DEFAULT" read-only="true"/>
+            <tx:method name="add*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="Exception"></tx:method>
+            <tx:method name="modify*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="Exception"></tx:method>
+            <tx:method name="remove*" propagation="REQUIRED" isolation="DEFAULT" rollback-for="Exception"></tx:method>
+        </tx:attributes>
+    </tx:advice>
+    <!--6.3配置事务切面-->
+    <aop:config>
+        <aop:pointcut id="myPointcut" expression="execution(* com.xja.blogsystem.service.Impl.*.*(..)) "/>
+        <aop:advisor pointcut-ref="myPointcut" advice-ref="advice"/>
+    </aop:config>
+</beans>

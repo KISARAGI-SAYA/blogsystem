@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.xja.blogsystem.mapper.UserMapper">
+
+    <select id="queryUserByAccountAndPassword" parameterType="map" resultType="com.xja.blogsystem.pojo.User">
+        SELECT * FROM users WHERE account = #{account} AND password = #{password}
+    </select>
+
+    <select id="queryUserByAccount" parameterType="string" resultType="com.xja.blogsystem.pojo.User">
+        SELECT * FROM users WHERE account = #{account}
+    </select>
+
+    <insert id="insertUser" parameterType="com.xja.blogsystem.pojo.User">
+        INSERT INTO users (account, password, real_name)
+        VALUES (#{account}, #{password}, #{realName})
+    </insert>
+
+    <select id="queryUserById" parameterType="int" resultType="com.xja.blogsystem.pojo.User">
+        SELECT * FROM users WHERE id = #{userId}
+    </select>
+
+    <update id="updateUserInfo" parameterType="com.xja.blogsystem.pojo.User">
+        UPDATE users
+        SET real_name = #{realName}
+        WHERE id = #{id}
+    </update>
+
+</mapper>
